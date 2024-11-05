@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <autd3-link-soem.hpp>
+#include <autd3-link-soem/soem.hpp>
 #include <sstream>
 
 TEST(Link, ThreadPriority) {
