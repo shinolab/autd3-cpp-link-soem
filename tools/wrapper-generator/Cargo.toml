@@ -1,0 +1,10 @@
+[package]
+name = "wrapper-generator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+glob = "0.3.1"
+cbindgen = "0.26.0"
+anyhow = "1.0.75"
+regex = "1.10.5"
