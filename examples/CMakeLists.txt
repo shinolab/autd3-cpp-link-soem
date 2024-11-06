@@ -19,33 +19,33 @@ endif()
 include(FetchContent)
 if(AUTD_LOCAL_TEST)
   FetchContent_Declare(
-    autd3-link-soem
+    autd3_link_soem
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/..
   )
 elseif(WIN32)
   if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64|IA64")
     FetchContent_Declare(
-      autd3-link-soem
+      autd3_link_soem
       URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.5/autd3-link-soem-v29.0.0-rc.5-win-x64.zip
     )
   elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ARM64")
     FetchContent_Declare(
-      autd3-link-soem
+      autd3_link_soem
       URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.5/autd3-link-soem-v29.0.0-rc.5-win-arm.zip
     )
   endif()
 elseif(APPLE)
   FetchContent_Declare(
-    autd3-link-soem
+    autd3_link_soem
     URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.5/autd3-link-soem-v29.0.0-rc.5-macos-aarch64.tar.gz
   )
 else()
   FetchContent_Declare(
-    autd3-link-soem
+    autd3_link_soem
     URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.5/autd3-link-soem-v29.0.0-rc.5-linux-x64.tar.gz
   )
 endif()
-FetchContent_MakeAvailable(autd3-link-soem)
+FetchContent_MakeAvailable(autd3_link_soem)
 
 add_executable(soem soem.cpp)
 target_link_libraries(soem PRIVATE autd3::autd3 autd3::link::soem)

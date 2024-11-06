@@ -73,7 +73,7 @@ fn main() -> Result<()> {
         let crate_path = Path::new(&entry).parent().unwrap();
         gen_c(
             &crate_path,
-            "../../include/autd3-link-soem/native_methods",
+            "../../include/autd3_link_soem/native_methods",
             vec![cbindgen::ItemType::Enums, cbindgen::ItemType::Structs],
         )?;
     }
@@ -82,7 +82,7 @@ fn main() -> Result<()> {
         let crate_path = Path::new(&entry).parent().unwrap();
         gen_c(
             &crate_path,
-            "../../include/autd3-link-soem/native_methods",
+            "../../include/autd3_link_soem/native_methods",
             vec![
                 cbindgen::ItemType::Constants,
                 cbindgen::ItemType::Enums,

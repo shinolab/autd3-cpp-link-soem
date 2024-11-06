@@ -63,7 +63,7 @@ def should_update_lib(config: Config, version: str) -> bool:
 
 
 def copy_lib(config: Config) -> None:
-    with pathlib.Path("include/autd3-link-soem.hpp").open() as f:
+    with pathlib.Path("include/autd3_link_soem.hpp").open() as f:
         content = f.read()
         version = re.search(r"static inline std::string version = \"(.*)\";", content).group(1).split(".")
         version = ".".join(version) if version[2].endswith("-rc") else ".".join(version[:3])
@@ -160,7 +160,7 @@ def cpp_test(args) -> None:  # noqa: ANN001
 def check_if_all_native_methods_called() -> None:
     defined_methods = set()
     pattern = re.compile(".* (AUTD.*)\\(.*")
-    for file in pathlib.Path("include/autd3-link-soem/native_methods").rglob("autd3capi*.h"):
+    for file in pathlib.Path("include/autd3_link_soem/native_methods").rglob("autd3capi*.h"):
         with file.open() as f:
             for line in f.readlines():
                 result = pattern.match(line)
@@ -187,7 +187,7 @@ def check_if_all_native_methods_called() -> None:
 
 
 def check_all_headers_is_tested() -> None:  # noqa: C901, PLR0912, PLR0915
-    with working_dir("include/autd3-link-soem"):
+    with working_dir("include/autd3_link_soem"):
         headers = [str(header.relative_to(pathlib.Path.cwd())) for header in pathlib.Path.cwd().rglob("*.hpp")]
         headers = [header.replace("\\", "/") for header in headers if not header.startswith("native_methods")]
         headers = {header.replace(".hpp", ".cpp") for header in headers}
@@ -232,7 +232,7 @@ def check_all_headers_is_tested() -> None:  # noqa: C901, PLR0912, PLR0915
             with (base_path / cpp).open() as f:
                 found_include = False
                 for line in f.readlines():
-                    if re.search(rf"#include <autd3-link-soem/{hpp}>", line):
+                    if re.search(rf"#include <autd3_link_soem/{hpp}>", line):
                         found_include = True
                         break
                 if not found_include:
@@ -382,14 +382,14 @@ def util_update_ver(args) -> None:  # noqa: ANN001
     else:
         version_cmake = ".".join(version_cmake)
     content = re.sub(
-        r"^project\(autd3-link-soem VERSION (.*)\)",
-        f"project(autd3 VERSION {version_cmake})",
+        r"^project\(autd3_link_soem VERSION (.*)\)",
+        f"project(autd3_link_soem VERSION {version_cmake})",
         content,
         flags=re.MULTILINE,
     )
     f.write_text(content)
 
-    f = pathlib.Path("include/autd3-link-soem.hpp")
+    f = pathlib.Path("include/autd3_link_soem.hpp")
     content = f.read_text()
     content = re.sub(
         r'^static inline std::string version = "(.*)";',
@@ -409,7 +409,7 @@ def util_update_ver(args) -> None:  # noqa: ANN001
     )
     content = re.sub(
         r"v.*/autd3-link-soem-v.*-(win|macos|linux)",
-        rf"v{version}/autd3-v{version}-\1",
+        rf"v{version}/autd3-link-soem-v{version}-\1",
         content,
         flags=re.MULTILINE,
     )

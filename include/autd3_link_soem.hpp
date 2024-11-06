@@ -1,6 +1,6 @@
 #pragma once
 
-#include "autd3-link-soem/soem.hpp"
+#include "autd3_link_soem/soem.hpp"
 
 namespace autd3 {
 
