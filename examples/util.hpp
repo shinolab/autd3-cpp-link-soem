@@ -9,7 +9,4 @@
 FORCE_CODEPAGE_UTF8_WIN
 #endif
 
-void print_err(std::exception& e) {
-  std::cerr << "\033[91m"
-            << "ERROR: " << e.what() << "\033[0m" << std::endl;
-}
+void print_err(std::exception& e) { std::cerr << "\033[91m" << "ERROR: " << e.what() << "\033[0m" << std::endl; }

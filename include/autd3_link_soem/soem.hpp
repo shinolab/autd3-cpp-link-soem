@@ -21,21 +21,16 @@ class Status {
   native_methods::Status _inner;
   std::string _msg;
 
-  explicit Status(const native_methods::Status inner, std::string msg)
-      : _inner(inner), _msg(std::move(msg)) {}
+  explicit Status(const native_methods::Status inner, std::string msg) : _inner(inner), _msg(std::move(msg)) {}
 
  public:
   friend class SOEM;
 
   static Status Lost() { return Status(native_methods::Status::Lost, ""); }
   static Status Error() { return Status(native_methods::Status::Error, ""); }
-  static Status StateChanged() {
-    return Status(native_methods::Status::StateChanged, "");
-  }
+  static Status StateChanged() { return Status(native_methods::Status::StateChanged, ""); }
 
-  bool operator==(const Status& that) const {
-    return _inner == that._inner && _msg == that._msg;
-  }
+  bool operator==(const Status& that) const { return _inner == that._inner && _msg == that._msg; }
 
   friend std::ostream& operator<<(std::ostream& os, const Status& s);
 };
@@ -50,8 +45,7 @@ class EtherCATAdapter {
   std::string _name;
 
  public:
-  EtherCATAdapter(std::string desc, std::string name)
-      : _desc(std::move(desc)), _name(std::move(name)) {}
+  EtherCATAdapter(std::string desc, std::string name) : _desc(std::move(desc)), _name(std::move(name)) {}
 
   [[nodiscard]] const std::string& desc() const { return _desc; }
   [[nodiscard]] const std::string& name() const { return _name; }
@@ -59,31 +53,24 @@ class EtherCATAdapter {
 
 class ThreadPriority {
  public:
-  AUTD3_API static inline const native_methods::ThreadPriorityPtr Min =
-      native_methods::AUTDLinkSOEMThreadPriorityMin();
-  AUTD3_API static inline const native_methods::ThreadPriorityPtr Max =
-      native_methods::AUTDLinkSOEMThreadPriorityMax();
-  AUTD3_API [[nodiscard]] static native_methods::ThreadPriorityPtr
-  Crossplarform(const uint8_t value) {
-    if (value > 99)
-      throw std::invalid_argument("value must be between 0 and 99");
+  AUTD3_API static inline const native_methods::ThreadPriorityPtr Min = native_methods::AUTDLinkSOEMThreadPriorityMin();
+  AUTD3_API static inline const native_methods::ThreadPriorityPtr Max = native_methods::AUTDLinkSOEMThreadPriorityMax();
+  AUTD3_API [[nodiscard]] static native_methods::ThreadPriorityPtr Crossplarform(const uint8_t value) {
+    if (value > 99) throw std::invalid_argument("value must be between 0 and 99");
     return native_methods::AUTDLinkSOEMThreadPriorityCrossplatform(value);
   }
 };
 
 template <class F>
-concept soem_err_handler_f =
-    requires(F f, const uint16_t slave, const Status status) {
-      { f(slave, status) } -> std::same_as<void>;
-    };
+concept soem_err_handler_f = requires(F f, const uint16_t slave, const Status status) {
+  { f(slave, status) } -> std::same_as<void>;
+};
 
 class SOEM final {
-  using native_err_handler_t = void (*)(const void*, uint32_t,
-                                        native_methods::Status);
+  using native_err_handler_t = void (*)(const void*, uint32_t, native_methods::Status);
   using err_handler_t = void (*)(uint16_t, Status);
 
-  explicit SOEM(const native_err_handler_t native_err_handler,
-                const err_handler_t err_handler)
+  explicit SOEM(const native_err_handler_t native_err_handler, const err_handler_t err_handler)
       : _native_err_handler(native_err_handler), _err_handler(err_handler) {}
 
   [[maybe_unused]] native_err_handler_t _native_err_handler;
@@ -109,10 +96,7 @@ class SOEM final {
           _process_priority(ProcessPriority::High),
           _err_handler(nullptr) {}
 
-    [[nodiscard]] SOEM resolve_link(native_methods::HandlePtr,
-                                    native_methods::LinkPtr) const {
-      return SOEM{_native_err_handler, _err_handler};
-    }
+    [[nodiscard]] SOEM resolve_link(native_methods::HandlePtr, native_methods::LinkPtr) const { return SOEM{_native_err_handler, _err_handler}; }
 
    public:
     using Link = SOEM;
@@ -133,46 +117,24 @@ class SOEM final {
 
     [[nodiscard]] native_methods::LinkBuilderPtr ptr() const {
       return native_methods::LinkBuilderPtr{
-          validate(AUTDLinkSOEM(
-                       _ifname.c_str(), static_cast<uint32_t>(_buf_size),
-                       static_cast<uint64_t>(
-                           std::chrono::duration_cast<std::chrono::nanoseconds>(
-                               _send_cycle)
-                               .count()),
-                       static_cast<uint64_t>(
-                           std::chrono::duration_cast<std::chrono::nanoseconds>(
-                               _sync0_cycle)
-                               .count()),
-                       reinterpret_cast<void*>(_native_err_handler),
-                       reinterpret_cast<void*>(_err_handler), _sync_mode,
-                       _process_priority, _thread_priority,
-                       static_cast<uint64_t>(
-                           std::chrono::duration_cast<std::chrono::nanoseconds>(
-                               _state_check_interval)
-                               .count()),
-                       _timer_strategy,
-                       static_cast<uint64_t>(
-                           std::chrono::duration_cast<std::chrono::nanoseconds>(
-                               _sync_tolerance)
-                               .count()),
-                       static_cast<uint64_t>(
-                           std::chrono::duration_cast<std::chrono::nanoseconds>(
-                               _sync_timeout)
-                               .count())))
+          validate(AUTDLinkSOEM(_ifname.c_str(), static_cast<uint32_t>(_buf_size),
+                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_send_cycle).count()),
+                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_sync0_cycle).count()),
+                                reinterpret_cast<void*>(_native_err_handler), reinterpret_cast<void*>(_err_handler), _sync_mode, _process_priority,
+                                _thread_priority,
+                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_state_check_interval).count()),
+                                _timer_strategy, static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_sync_tolerance).count()),
+                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_sync_timeout).count())))
               ._0};
     }
 
     template <soem_err_handler_f F>
     AUTD3_API [[nodiscard]] Builder&& with_err_handler(F value) && {
       _err_handler = static_cast<err_handler_t>(value);
-      _native_err_handler = +[](const void* context, const uint32_t slave,
-                                const native_methods::Status status) {
-        const std::string msg(128, ' ');  // LCOV_EXCL_LINE
-        (void)AUTDLinkSOEMStatusGetMsg(
-            status, const_cast<char*>(msg.c_str()));  // LCOV_EXCL_LINE
-        (*reinterpret_cast<err_handler_t>(const_cast<void*>(context)))(
-            static_cast<uint16_t>(slave),
-            Status(status, msg));  // LCOV_EXCL_LINE
+      _native_err_handler = +[](const void* context, const uint32_t slave, const native_methods::Status status) {
+        const std::string msg(128, ' ');                                                                                    // LCOV_EXCL_LINE
+        (void)AUTDLinkSOEMStatusGetMsg(status, const_cast<char*>(msg.c_str()));                                             // LCOV_EXCL_LINE
+        (*reinterpret_cast<err_handler_t>(const_cast<void*>(context)))(static_cast<uint16_t>(slave), Status(status, msg));  // LCOV_EXCL_LINE
       };  // LCOV_EXCL_LINE
       return std::move(*this);
     }
@@ -205,10 +167,7 @@ class RemoteSOEM final {
 
     AUTD3_API explicit Builder(std::string addr) : _addr(std::move(addr)) {}
 
-    [[nodiscard]] static RemoteSOEM resolve_link(native_methods::HandlePtr,
-                                                 native_methods::LinkPtr) {
-      return RemoteSOEM{};
-    }
+    [[nodiscard]] static RemoteSOEM resolve_link(native_methods::HandlePtr, native_methods::LinkPtr) { return RemoteSOEM{}; }
 
    public:
     using Link = RemoteSOEM;
@@ -216,14 +175,11 @@ class RemoteSOEM final {
     AUTD3_DEF_PROP(std::string, addr)
 
     [[nodiscard]] native_methods::LinkBuilderPtr ptr() const {
-      return native_methods::LinkBuilderPtr{
-          validate(native_methods::AUTDLinkRemoteSOEM(_addr.c_str()))._0};
+      return native_methods::LinkBuilderPtr{validate(native_methods::AUTDLinkRemoteSOEM(_addr.c_str()))._0};
     }
   };
 
-  AUTD3_API [[nodiscard]] static Builder builder(const std::string& addr) {
-    return Builder(addr);
-  }
+  AUTD3_API [[nodiscard]] static Builder builder(const std::string& addr) { return Builder(addr); }
 };
 
 }  // namespace autd3::link
