@@ -28,10 +28,10 @@ enable_testing()
 
 include(FetchContent)
 FetchContent_Declare(
-  autd3-link-soem
+  autd3_link_soem
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/..
 )
-FetchContent_MakeAvailable(autd3-link-soem)
+FetchContent_MakeAvailable(autd3_link_soem)
 
 add_executable(test_autd3 main.cpp)
 
