@@ -73,8 +73,8 @@ class SOEM final {
   explicit SOEM(const native_err_handler_t native_err_handler, const err_handler_t err_handler)
       : _native_err_handler(native_err_handler), _err_handler(err_handler) {}
 
-  [[maybe_unused]] native_err_handler_t _native_err_handler;
-  [[maybe_unused]] err_handler_t _err_handler;
+  native_err_handler_t _native_err_handler;
+  err_handler_t _err_handler;
 
  public:
   class Builder final {
@@ -117,14 +117,9 @@ class SOEM final {
 
     [[nodiscard]] native_methods::LinkBuilderPtr ptr() const {
       return native_methods::LinkBuilderPtr{
-          validate(AUTDLinkSOEM(_ifname.c_str(), static_cast<uint32_t>(_buf_size),
-                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_send_cycle).count()),
-                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_sync0_cycle).count()),
+          validate(AUTDLinkSOEM(_ifname.c_str(), static_cast<uint32_t>(_buf_size), _send_cycle, _sync0_cycle,
                                 reinterpret_cast<void*>(_native_err_handler), reinterpret_cast<void*>(_err_handler), _sync_mode, _process_priority,
-                                _thread_priority,
-                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_state_check_interval).count()),
-                                _timer_strategy, static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_sync_tolerance).count()),
-                                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(_sync_timeout).count())))
+                                _thread_priority, _state_check_interval, _timer_strategy, _sync_tolerance, _sync_timeout))
               ._0};
     }
 
