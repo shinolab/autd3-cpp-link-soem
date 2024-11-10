@@ -51,15 +51,15 @@ ResultSyncLinkBuilder AUTDLinkSOEM(const char *ifname,
 
 [[nodiscard]]
 bool AUTDLinkSOEMIsDefault(uint32_t buf_size,
-                           uint64_t send_cycle_ns,
-                           uint64_t sync0_cycle_ns,
+                           Duration send_cycle,
+                           Duration sync0_cycle,
                            SyncMode mode,
                            ProcessPriority process_priority,
                            ThreadPriorityPtr thread_priority,
-                           uint64_t state_check_interval_ns,
+                           Duration state_check_interval,
                            TimerStrategy timer_strategy,
-                           uint64_t tolerance_ns,
-                           uint64_t sync_timeout_ns);
+                           Duration tolerance,
+                           Duration sync_timeout);
 
 [[nodiscard]] uint32_t AUTDLinkSOEMStatusGetMsg(Status src, char *dst);
 

@@ -33,13 +33,9 @@ TEST(Link, Status) {
 
 TEST(Link, SOEMIsDefault) {
   auto link = autd3::link::SOEM::builder();
-  ASSERT_TRUE(autd3::native_methods::AUTDLinkSOEMIsDefault(
-      link.buf_size(), static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(link.send_cycle()).count()),
-      static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(link.sync0_cycle()).count()), link.sync_mode(),
-      link.process_priority(), link.thread_priority(),
-      static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(link.state_check_interval()).count()), link.timer_strategy(),
-      static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(link.sync_tolerance()).count()),
-      static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(link.sync_timeout()).count())));
+  ASSERT_TRUE(autd3::native_methods::AUTDLinkSOEMIsDefault(link.buf_size(), link.send_cycle(), link.sync0_cycle(), link.sync_mode(),
+                                                           link.process_priority(), link.thread_priority(), link.state_check_interval(),
+                                                           link.timer_strategy(), link.sync_tolerance(), link.sync_timeout()));
 }
 
 TEST(Link, SOEM) {
