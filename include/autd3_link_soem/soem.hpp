@@ -117,9 +117,11 @@ class SOEM final {
 
     [[nodiscard]] native_methods::LinkBuilderPtr ptr() const {
       return native_methods::LinkBuilderPtr{
-          validate(AUTDLinkSOEM(_ifname.c_str(), static_cast<uint32_t>(_buf_size), _send_cycle, _sync0_cycle,
-                                reinterpret_cast<void*>(_native_err_handler), reinterpret_cast<void*>(_err_handler), _sync_mode, _process_priority,
-                                _thread_priority, _state_check_interval, _timer_strategy, _sync_tolerance, _sync_timeout))
+          validate(AUTDLinkSOEM(_ifname.c_str(), static_cast<uint32_t>(_buf_size), native_methods::to_duration(_send_cycle),
+                                native_methods::to_duration(_sync0_cycle), reinterpret_cast<void*>(_native_err_handler),
+                                reinterpret_cast<void*>(_err_handler), _sync_mode, _process_priority, _thread_priority,
+                                native_methods::to_duration(_state_check_interval), _timer_strategy, native_methods::to_duration(_sync_tolerance),
+                                native_methods::to_duration(_sync_timeout)))
               ._0};
     }
 
