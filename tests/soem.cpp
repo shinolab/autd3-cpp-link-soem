@@ -33,9 +33,10 @@ TEST(Link, Status) {
 
 TEST(Link, SOEMIsDefault) {
   auto link = autd3::link::SOEM::builder();
-  ASSERT_TRUE(autd3::native_methods::AUTDLinkSOEMIsDefault(link.buf_size(), link.send_cycle(), link.sync0_cycle(), link.sync_mode(),
-                                                           link.process_priority(), link.thread_priority(), link.state_check_interval(),
-                                                           link.timer_strategy(), link.sync_tolerance(), link.sync_timeout()));
+  ASSERT_TRUE(autd3::native_methods::AUTDLinkSOEMIsDefault(
+      link.buf_size(), autd3::native_methods::to_duration(link.send_cycle()), autd3::native_methods::to_duration(link.sync0_cycle()),
+      link.sync_mode(), link.process_priority(), link.thread_priority(), autd3::native_methods::to_duration(link.state_check_interval()),
+      link.timer_strategy(), autd3::native_methods::to_duration(link.sync_tolerance()), autd3::native_methods::to_duration(link.sync_timeout())));
 }
 
 TEST(Link, SOEM) {
