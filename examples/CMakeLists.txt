@@ -26,23 +26,23 @@ elseif(WIN32)
   if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64|IA64")
     FetchContent_Declare(
       autd3_link_soem
-      URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.9/autd3-link-soem-v29.0.0-rc.9-win-x64.zip
+      URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.10/autd3-link-soem-v29.0.0-rc.10-win-x64.zip
     )
   elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ARM64")
     FetchContent_Declare(
       autd3_link_soem
-      URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.9/autd3-link-soem-v29.0.0-rc.9-win-arm.zip
+      URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.10/autd3-link-soem-v29.0.0-rc.10-win-arm.zip
     )
   endif()
 elseif(APPLE)
   FetchContent_Declare(
     autd3_link_soem
-    URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.9/autd3-link-soem-v29.0.0-rc.9-macos-aarch64.tar.gz
+    URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.10/autd3-link-soem-v29.0.0-rc.10-macos-aarch64.tar.gz
   )
 else()
   FetchContent_Declare(
     autd3_link_soem
-    URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.9/autd3-link-soem-v29.0.0-rc.9-linux-x64.tar.gz
+    URL https://github.com/shinolab/autd3-cpp-link-soem/releases/download/v29.0.0-rc.10/autd3-link-soem-v29.0.0-rc.10-linux-x64.tar.gz
   )
 endif()
 FetchContent_MakeAvailable(autd3_link_soem)
