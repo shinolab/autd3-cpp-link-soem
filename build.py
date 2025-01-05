@@ -263,73 +263,21 @@ def cpp_cov(args) -> None:  # noqa: ANN001
             if config.release:
                 command.extend(["--config", "Release"])
             run_command(command)
-
             with working_dir("CMakeFiles/test_autd3.dir"):
-                run_command(
-                    [
-                        "lcov",
-                        "-c",
-                        "-i",
-                        "-d",
-                        ".",
-                        "-o",
-                        "coverage.baseline",
-                    ],
-                )
-
+                run_command(["lcov", "-c", "-i", "-d", ".", "--ignore-errors", "mismatch", "-o", "coverage.baseline"])
             target_dir = "."
             if config.is_windows():
                 target_dir = "Release" if config.release else "Debug"
             run_command([f"{target_dir}/test_autd3{config.exe_ext()}"])
 
             with working_dir("CMakeFiles/test_autd3.dir"):
+                run_command(["lcov", "-c", "-d", ".", "--ignore-errors", "mismatch", "-o", "coverage.out"])
+                run_command(["lcov", "-a", "coverage.baseline", "-a", "coverage.out", "-o", "coverage.raw.info"])
                 run_command(
-                    [
-                        "lcov",
-                        "-c",
-                        "-d",
-                        ".",
-                        "-o",
-                        "coverage.out",
-                    ],
-                )
-                run_command(
-                    [
-                        "lcov",
-                        "-a",
-                        "coverage.baseline",
-                        "-a",
-                        "coverage.out",
-                        "-o",
-                        "coverage.raw.info",
-                    ],
-                )
-
-                run_command(
-                    [
-                        "lcov",
-                        "-r",
-                        "coverage.raw.info",
-                        "*/_deps/*",
-                        "*/usr/*",
-                        "*/tests/*",
-                        "--ignore-errors",
-                        "unused",
-                        "-o",
-                        "coverage.info",
-                    ],
+                    ["lcov", "-r", "coverage.raw.info", "*/_deps/*", "*/usr/*", "*/tests/*", "--ignore-errors", "unused", "-o", "coverage.info"]
                 )
                 if args.html:
-                    run_command(
-                        [
-                            "genhtml",
-                            "-o",
-                            "html",
-                            "--num-spaces",
-                            "4",
-                            "coverage.info",
-                        ],
-                    )
+                    run_command(["genhtml", "-o", "html", "--num-spaces", "4", "coverage.info"])
 
 
 def cpp_run(args) -> None:  # noqa: ANN001

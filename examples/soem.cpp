@@ -15,7 +15,7 @@ int main() try {
 
   autd3::tracing_init();
 
-  auto autd = autd3::ControllerBuilder(std::vector{autd3::AUTD3(autd3::Vector3::Zero())})
+  auto autd = autd3::ControllerBuilder(std::vector{autd3::AUTD3(autd3::Point3::origin())})
                   .open(autd3::link::SOEM::builder().with_err_handler([](const uint16_t slave, const autd3::link::Status status) {
                     std::cout << "slave [" << slave << "]: " << status << std::endl;
                     if (status == autd3::link::Status::Lost()) {

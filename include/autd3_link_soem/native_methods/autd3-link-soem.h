@@ -6,6 +6,7 @@
 
 namespace autd3::native_methods {
 
+/// The process priority. See [`ProcessPriorityClass`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.processpriorityclass?view=net-8.0#system-diagnostics-processpriorityclass-idle) for more information.
 enum class ProcessPriority : uint8_t {
   Idle = 0,
   BelowNormal = 1,
@@ -15,9 +16,15 @@ enum class ProcessPriority : uint8_t {
   Realtime = 5,
 };
 
+/// The timer strategy.
 enum class TimerStrategy : uint8_t {
+  /// Using [`spin_sleep`] crate.
+  ///
+  /// [`spin_sleep`]: https://docs.rs/spin_sleep
   SpinSleep = 0,
+  /// Using [`std::thread::sleep`] function.
   StdSleep = 1,
+  /// Using spin loop, or busy-wait loop.
   SpinWait = 2,
 };
 

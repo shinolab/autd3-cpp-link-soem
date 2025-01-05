@@ -22,9 +22,7 @@ jobs:
           python-version: "3.13"
       - run: |
           sudo apt update && sudo apt -y install lcov
-          sudo rm /usr/bin/gcov
-          sudo ln -s /usr/bin/gcov-12 /usr/bin/gcov
-          python3 build.py cov --cmake-extra="-DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12"
+          python3 build.py cov
       - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
