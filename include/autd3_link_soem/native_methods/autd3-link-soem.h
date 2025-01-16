@@ -16,6 +16,16 @@ enum class ProcessPriority : uint8_t {
   Realtime = 5,
 };
 
+/// Synchronization mode.
+///
+/// See [Synchronization modes of an EtherCAT slave](https://infosys.beckhoff.com/english.php?content=../content/1033/ethercatsystem/2469118347.html&id=) for more information.
+enum class SyncMode : uint8_t {
+  /// DC
+  DC = 0,
+  /// FreeRun
+  FreeRun = 1,
+};
+
 /// The timer strategy.
 enum class TimerStrategy : uint8_t {
   /// Using [`spin_sleep`] crate.

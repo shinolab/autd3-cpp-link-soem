@@ -96,7 +96,7 @@ class SOEM final {
           _process_priority(ProcessPriority::High),
           _err_handler(nullptr) {}
 
-    [[nodiscard]] SOEM resolve_link(native_methods::HandlePtr, native_methods::LinkPtr) const { return SOEM{_native_err_handler, _err_handler}; }
+    [[nodiscard]] SOEM resolve_link(native_methods::LinkPtr) const { return SOEM{_native_err_handler, _err_handler}; }
 
    public:
     using Link = SOEM;
@@ -164,7 +164,7 @@ class RemoteSOEM final {
 
     AUTD3_API explicit Builder(std::string addr) : _addr(std::move(addr)) {}
 
-    [[nodiscard]] static RemoteSOEM resolve_link(native_methods::HandlePtr, native_methods::LinkPtr) { return RemoteSOEM{}; }
+    [[nodiscard]] static RemoteSOEM resolve_link(native_methods::LinkPtr) { return RemoteSOEM{}; }
 
    public:
     using Link = RemoteSOEM;
