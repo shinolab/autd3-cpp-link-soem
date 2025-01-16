@@ -35,19 +35,19 @@ void AUTDLinkSOEMTracingInit();
 ResultStatus AUTDLinkSOEMTracingInitWithFile(const char *path);
 
 [[nodiscard]]
-ResultSyncLinkBuilder AUTDLinkSOEM(const char *ifname,
-                                   uint32_t buf_size,
-                                   Duration send_cycle,
-                                   Duration sync0_cycle,
-                                   const void* err_handler,
-                                   const void* err_context,
-                                   SyncMode mode,
-                                   ProcessPriority process_priority,
-                                   ThreadPriorityPtr thread_priority,
-                                   Duration state_check_interval,
-                                   TimerStrategy timer_strategy,
-                                   Duration tolerance,
-                                   Duration sync_timeout);
+ResultLinkBuilder AUTDLinkSOEM(const char *ifname,
+                               uint32_t buf_size,
+                               Duration send_cycle,
+                               Duration sync0_cycle,
+                               const void* err_handler,
+                               const void* err_context,
+                               SyncMode mode,
+                               ProcessPriority process_priority,
+                               ThreadPriorityPtr thread_priority,
+                               Duration state_check_interval,
+                               TimerStrategy timer_strategy,
+                               Duration tolerance,
+                               Duration sync_timeout);
 
 [[nodiscard]]
 bool AUTDLinkSOEMIsDefault(uint32_t buf_size,
@@ -63,7 +63,7 @@ bool AUTDLinkSOEMIsDefault(uint32_t buf_size,
 
 [[nodiscard]] uint32_t AUTDLinkSOEMStatusGetMsg(Status src, char *dst);
 
-[[nodiscard]] ResultSyncLinkBuilder AUTDLinkRemoteSOEM(const char *addr);
+[[nodiscard]] ResultLinkBuilder AUTDLinkRemoteSOEM(const char *addr);
 
 [[nodiscard]] ThreadPriorityPtr AUTDLinkSOEMThreadPriorityMin();
 

@@ -26,7 +26,11 @@ pub fn gen_c<P1: AsRef<Path>, P2: AsRef<Path>>(
     config.sort_by = cbindgen::SortKey::None;
     config.usize_is_size_t = true;
     config.export = cbindgen::ExportConfig {
-        include: vec!["ProcessPriority".to_string(), "TimerStrategy".to_string()],
+        include: vec![
+            "ProcessPriority".to_string(),
+            "TimerStrategy".to_string(),
+            "SyncMode".to_string(),
+        ],
         exclude: vec!["ConstPtr".to_string()],
         rename: vec![("ConstPtr".to_string(), "const void*".to_string())]
             .into_iter()
