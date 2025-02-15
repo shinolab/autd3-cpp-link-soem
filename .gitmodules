@@ -1,6 +1,3 @@
-[submodule "tools/autd3_build_utils"]
-	path = tools/autd3_build_utils
-	url = https://github.com/shinolab/autd3_build_utils.git
 [submodule "tools/wrapper-generator/autd3-link-soem"]
 	path = tools/wrapper-generator/autd3-link-soem
 	url = https://github.com/shinolab/autd3-link-soem.git

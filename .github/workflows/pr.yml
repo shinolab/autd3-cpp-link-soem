@@ -39,19 +39,10 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+      - uses: ./.github/actions/setup-build
       - run: |
-          python3 build.py build --release --cmake-extra="-DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12"
-          python3 build.py test --release --cmake-extra="-DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12"
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-      - run: |
-          python3 build.py build --release
-          python3 build.py test --release
-        if: ${{ matrix.os != 'ubuntu-latest' }}
+          cargo make build
+          cargo make test
 
   all-tests-passed:
     if: ${{ always() }}

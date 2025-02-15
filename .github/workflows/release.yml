@@ -18,15 +18,10 @@ jobs:
         prerelease: false
     - run: |
         echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
-        echo "${{ steps.create_release.outputs.id }}" > release_id.txt
     - uses: actions/upload-artifact@v4
       with:
         name: release_url
         path: release_url.txt
-    - uses: actions/upload-artifact@v4
-      with:
-        name: release_id
-        path: release_id.txt
 
   publish:
     needs: [create-release]
@@ -39,9 +34,6 @@ jobs:
           - os: windows-latest
             name: win
             arch: x64
-          - os: windows-latest
-            name: win
-            arch: aarch64
           - os: ubuntu-latest
             name: linux
             arch: x64
@@ -50,25 +42,18 @@ jobs:
             arch: aarch64
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+      - uses: ./.github/actions/setup-build
       - id: get_version
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           result-encoding: string
           script: |
-            return 'autd3-link-soem-'+context.payload.ref.replace(/refs\/tags\//, '')+'-${{ matrix.name }}-${{ matrix.arch }}';
-      - run: |
-          python3 build.py build --release --no-examples --arch=${{ matrix.arch }} --vs=2022
-          Compress-Archive -Path LICENSE, lib, include, CMakeLists.txt, README.md, ThirdPartyNotice.txt -DestinationPath assets.zip
+            return 'autd3-'+context.payload.ref.replace(/refs\/tags\//, '')+'-${{ matrix.name }}-${{ matrix.arch }}';
+      - run: cargo make update-lib
+      - run: Compress-Archive -Path LICENSE, lib, include, CMakeLists.txt, README.md, ThirdPartyNotice.txt -DestinationPath assets.zip
         if: ${{ matrix.os == 'windows-latest' }} 
-      - run: |
-          python3 build.py build --release --no-examples --arch=${{ matrix.arch }}
-          tar -zcvf assets.tar.gz lib include CMakeLists.txt LICENSE README.md ThirdPartyNotice.txt
+      - run: tar -zcvf assets.tar.gz lib include CMakeLists.txt LICENSE README.md ThirdPartyNotice.txt
         shell: bash
         if: ${{ matrix.os != 'windows-latest' }}
       - uses: actions/download-artifact@v4

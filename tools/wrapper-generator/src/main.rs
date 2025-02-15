@@ -30,6 +30,7 @@ pub fn gen_c<P1: AsRef<Path>, P2: AsRef<Path>>(
             "ProcessPriority".to_string(),
             "TimerStrategy".to_string(),
             "SyncMode".to_string(),
+            "Status".to_string(),
         ],
         exclude: vec!["ConstPtr".to_string()],
         rename: vec![("ConstPtr".to_string(), "const void*".to_string())]
@@ -61,9 +62,6 @@ pub fn gen_c<P1: AsRef<Path>, P2: AsRef<Path>>(
     let content = re
         .replace_all(&content, "constexpr const float $1 = ${2}f;")
         .to_string();
-
-    let re = regex::Regex::new(r"FfiFuture<(.*)>").unwrap();
-    let content = re.replace_all(&content, "FfiFuture$1").to_string();
 
     std::fs::write(&out_file, content)?;
 

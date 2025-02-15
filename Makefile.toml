@@ -1,0 +1,227 @@
+[config]
+default_to_workspace = false
+skip_core_tasks = true
+
+[tasks.check]
+dependencies = ["format", "build", "test"]
+
+[tasks.format]
+windows_alias = "format-win"
+linux_alias = "format-nix"
+mac_alias = "format-nix"
+
+[tasks.format-nix]
+script_runner = "@shell"
+script = '''
+clang-format -i ./examples/**.hpp ./examples/**.cpp ./include/**.hpp ./tests/**.hpp ./tests/**.cpp
+'''
+
+[tasks.format-win]
+script_runner = "pwsh"
+script_extension = "ps1"
+script = '''
+Function Format($root){
+    Get-ChildItem -Path $root -Recurse  -Include *.hpp,*.cpp |
+        foreach {
+            &clang-format -i $_.FullName
+        }
+}
+
+Format examples
+Format include
+Format tests
+'''
+
+[tasks.build-mkdir]
+ignore_errors = true
+script_runner = "@shell"
+script = '''
+mkdir -p build/examples
+'''
+
+[tasks.build-cmake]
+cwd = "./build/examples"
+command = "cmake"
+args = ["../../examples", "-DAUTD_LOCAL_TEST=ON"]
+
+[tasks.build]
+dependencies = ["update-lib", "build-mkdir", "build-cmake"]
+cwd = "./build/examples"
+command = "cmake"
+args = ["--build", ".", "--config", "Release"]
+
+[tasks.test-mkdir]
+ignore_errors = true
+script_runner = "@shell"
+script = '''
+mkdir -p build/tests
+'''
+
+[tasks.test-cmake]
+cwd = "./build/tests"
+command = "cmake"
+args = ["../../tests"]
+
+[tasks.test-build]
+cwd = "./build/tests"
+command = "cmake"
+args = ["--build", ".", "--config", "Release"]
+
+[tasks.test-run]
+windows_alias = "test-run-windows"
+linux_alias = "test-run-nix"
+mac_alias = "test-run-nix"
+
+[tasks.test-run-windows]
+cwd = "./build/tests/Release"
+script_runner = "@shell"
+script = '''
+./test_autd3.exe
+'''
+
+[tasks.test-run-nix]
+cwd = "./build/tests"
+script_runner = "@shell"
+script = '''
+./test_autd3
+'''
+
+[tasks.test]
+dependencies = ["update-lib", "test-mkdir", "test-cmake", "test-build", "test-run"]
+
+[tasks.clean]
+ignore_errors = true
+script_runner = "@shell"
+script = '''
+rm -rf lib
+rm -rf bin
+rm -rf build
+rm VRESION
+'''
+
+[tasks.cov]
+dependencies = ["update-lib", "test-mkdir", "cov-cmake-test", "test-build", "test-run", "lcov"]
+
+[tasks.cov-cmake-test]
+cwd = "./build/tests"
+command = "cmake"
+args = ["../../tests", "-DCOVERAGE=ON", "${@}"]
+
+[tasks.lcov]
+cwd = "./build/tests/CMakeFiles/test_autd3.dir"
+script_runner = "@shell"
+script = '''
+lcov -d . -c --ignore-errors mismatch --ignore-errors gcov,gcov --ignore-errors mismatch,mismatch -o coverage.raw.info
+lcov -r coverage.raw.info "*/_deps/*" "*/tests/*" "*/usr/*" --ignore-errors unused -o coverage.info
+genhtml -o html --num-spaces 4 coverage.info
+'''
+
+[tasks.generate-wrapper]
+cwd = "./tools/wrapper-generator"
+command = "cargo"
+args = ["r", "--release"]
+
+[tasks.update-lib]
+script_runner = "python"
+script_extension = "py"
+script = '''
+import platform
+import re
+import shutil
+import sys
+import tarfile
+import urllib.request
+from pathlib import Path
+
+
+def download_and_extract(url: str, *dest_dirs: str) -> None:
+    tmp_file = Path("tmp.zip" if url.endswith(".zip") else "tmp.tar.gz")
+    urllib.request.urlretrieve(url, tmp_file)
+    if tmp_file.suffix == ".zip":
+        shutil.unpack_archive(tmp_file, ".")
+    else:
+        with tarfile.open(tmp_file, "r:gz") as tar:
+            tar.extractall(filter="fully_trusted")
+    tmp_file.unlink()
+
+
+def should_update_lib(version: str) -> bool:
+    if platform.system() == "Windows":
+        if not Path("lib/autd3capi_link_soem.lib").is_file():
+            return True
+    elif platform.system() == "Darwin":
+        if not Path("libautd3capi_link_soem.a").is_file():
+            return True
+
+    version_file = Path("VERSION")
+    if not version_file.exists():
+        return True
+
+    old_version = version_file.read_text().strip()
+    return old_version != version
+
+
+with Path("include/autd3_link_soem.hpp").open() as f:
+    content = f.read()
+    version = re.search(r"static inline std::string version = \"(.*)\";", content).group(1).split(".")
+    version = (
+        ".".join(version[:4]) if version[2].endswith("rc") else ".".join(version[:3])
+    )
+
+if not should_update_lib(version):
+    sys.exit(0)
+
+base_url = f"https://github.com/shinolab/autd3-capi-link-soem/releases/download/v{version}"
+
+if platform.system() == "Windows":
+    download_and_extract(
+        f"{base_url}/autd3-link-soem-v{version}-win-x64-static.zip",
+        "src/native/windows/x64",
+        "tests",
+    )
+elif platform.system() == "Darwin":
+    download_and_extract(
+        f"{base_url}/autd3-link-soem-v{version}-macos-aarch64-static.tar.gz",
+        "src/native/osx/aarch64",
+        "tests",
+    )
+else:
+    download_and_extract(
+        f"{base_url}/autd3-link-soem-v{version}-linux-x64-static.tar.gz",
+        "src/native/linux/x64",
+        "tests",
+    )
+
+Path("VERSION").write_text(version)
+'''
+
+[tasks.update-version]
+script_runner = "python"
+script_extension = "py"
+script = '''
+import sys
+import re
+from pathlib import Path
+
+version = sys.argv[1]
+
+file = Path("CMakeLists.txt")
+content = file.read_text(encoding="utf-8")
+content = re.sub(r"^project\(autd3_link_soem VERSION (.*)\)", f"project(autd3_link_soem VERSION {version})", content, flags=re.MULTILINE)
+file.write_text(content, encoding="utf-8")
+
+file = Path("CMakeLists.txt")
+content = file.read_text(encoding="utf-8")
+content = re.sub(r"v.*/autd3-v.*-(win|macos|linux)", rf"v{version}/autd3-v{version}-\1", content, flags=re.MULTILINE)
+file.write_text(content, encoding="utf-8")
+
+file = Path("include/autd3_link_soem.hpp")
+content = file.read_text(encoding="utf-8")
+content = re.sub(r'^static inline std::string version = "(.*)";', f'static inline std::string version = "{version}";', content, flags=re.MULTILINE)
+file.write_text(content, encoding="utf-8")
+
+file = Path("examples/CMakeLists.txt")
+content = file.read_text(encoding="utf-8")
+content = re.sub(r"v.*/autd3-link-soem-v.*-(win|macos|linux)", rf"v{version}/autd3-link-soem-v{version}-\1", content, flags=re.MULTILINE)
+file.write_text(content, encoding="utf-8")
+'''

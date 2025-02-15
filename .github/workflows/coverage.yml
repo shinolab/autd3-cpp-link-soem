@@ -15,16 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+      - uses: ./.github/actions/setup-build
       - run: |
           sudo apt update && sudo apt -y install lcov
-          python3 build.py cov
-      - uses: codecov/codecov-action@v4
+          cargo make cov
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: tests/build/CMakeFiles/test_autd3.dir/coverage.info
+          files: build/tests/CMakeFiles/test_autd3.dir/coverage.info
           fail_ci_if_error: true
+          disable_search: true
