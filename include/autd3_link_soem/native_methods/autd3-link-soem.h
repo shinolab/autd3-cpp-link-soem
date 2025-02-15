@@ -6,7 +6,9 @@
 
 namespace autd3::native_methods {
 
-/// The process priority. See [`ProcessPriorityClass`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.processpriorityclass?view=net-8.0#system-diagnostics-processpriorityclass-idle) for more information.
+/// The process priority. See
+/// [`ProcessPriorityClass`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.processpriorityclass?view=net-8.0#system-diagnostics-processpriorityclass-idle)
+/// for more information.
 enum class ProcessPriority : uint8_t {
   Idle = 0,
   BelowNormal = 1,
@@ -16,9 +18,20 @@ enum class ProcessPriority : uint8_t {
   Realtime = 5,
 };
 
+/// The status of the EtherCAT slave.
+enum class Status : uint8_t {
+  /// The slave is in SAFE_OP + ERROR.
+  Error = 0,
+  /// The slave is lost.
+  Lost = 1,
+  /// The slave is in SAFE_OP.
+  StateChanged = 2,
+};
+
 /// Synchronization mode.
 ///
-/// See [Synchronization modes of an EtherCAT slave](https://infosys.beckhoff.com/english.php?content=../content/1033/ethercatsystem/2469118347.html&id=) for more information.
+/// See [Synchronization modes of an EtherCAT
+/// slave](https://infosys.beckhoff.com/english.php?content=../content/1033/ethercatsystem/2469118347.html&id=) for more information.
 enum class SyncMode : uint8_t {
   /// DC
   DC = 0,
@@ -38,4 +51,4 @@ enum class TimerStrategy : uint8_t {
   SpinWait = 2,
 };
 
-} // namespace autd3::native_methods
+}  // namespace autd3::native_methods

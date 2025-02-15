@@ -6,18 +6,26 @@
 
 namespace autd3::native_methods {
 
-enum class Status : uint8_t {
-  Error = 0,
-  StateChanged = 1,
-  Lost = 2,
-};
-
 struct EthernetAdaptersPtr {
   const void *_0;
 };
 
 struct ThreadPriorityPtr {
   const void *_0;
+};
+
+struct SOEMOption {
+  const char *ifname;
+  uint32_t buf_size;
+  Duration send_cycle;
+  Duration sync0_cycle;
+  SyncMode sync_mode;
+  ProcessPriority process_priority;
+  ThreadPriorityPtr thread_priority;
+  Duration state_check_interval;
+  TimerStrategy timer_strategy;
+  Duration sync_tolerance;
+  Duration sync_timeout;
 };
 
 extern "C" {
@@ -35,35 +43,13 @@ void AUTDLinkSOEMTracingInit();
 ResultStatus AUTDLinkSOEMTracingInitWithFile(const char *path);
 
 [[nodiscard]]
-ResultLinkBuilder AUTDLinkSOEM(const char *ifname,
-                               uint32_t buf_size,
-                               Duration send_cycle,
-                               Duration sync0_cycle,
-                               const void* err_handler,
-                               const void* err_context,
-                               SyncMode mode,
-                               ProcessPriority process_priority,
-                               ThreadPriorityPtr thread_priority,
-                               Duration state_check_interval,
-                               TimerStrategy timer_strategy,
-                               Duration tolerance,
-                               Duration sync_timeout);
+ResultLink AUTDLinkSOEM(const void *err_handler, const void *err_context, SOEMOption option);
 
-[[nodiscard]]
-bool AUTDLinkSOEMIsDefault(uint32_t buf_size,
-                           Duration send_cycle,
-                           Duration sync0_cycle,
-                           SyncMode mode,
-                           ProcessPriority process_priority,
-                           ThreadPriorityPtr thread_priority,
-                           Duration state_check_interval,
-                           TimerStrategy timer_strategy,
-                           Duration tolerance,
-                           Duration sync_timeout);
+[[nodiscard]] bool AUTDLinkSOEMIsDefault(SOEMOption option);
 
 [[nodiscard]] uint32_t AUTDLinkSOEMStatusGetMsg(Status src, char *dst);
 
-[[nodiscard]] ResultLinkBuilder AUTDLinkRemoteSOEM(const char *addr);
+[[nodiscard]] ResultLink AUTDLinkRemoteSOEM(const char *addr);
 
 [[nodiscard]] ThreadPriorityPtr AUTDLinkSOEMThreadPriorityMin();
 
@@ -71,6 +57,6 @@ bool AUTDLinkSOEMIsDefault(uint32_t buf_size,
 
 [[nodiscard]] ThreadPriorityPtr AUTDLinkSOEMThreadPriorityMax();
 
-} // extern "C"
+}  // extern "C"
 
-} // namespace autd3::native_methods
+}  // namespace autd3::native_methods
