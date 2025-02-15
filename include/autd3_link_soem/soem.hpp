@@ -100,7 +100,7 @@ struct SOEM final {
   using err_handler_t = void (*)(uint16_t, Status);
 
   explicit SOEM(const err_handler_t err_handler, const SOEMOption option) : err_handler(err_handler), option(option) {
-    _native_err_handler = +[](const void* context, const uint32_t slave, const native_methods::Status status) {
+    _native_err_handler = +[](const void* context, const uint32_t slave, const native_methods::Status status) {           // LCOV_EXCL_LINE
       const std::string msg(128, ' ');                                                                                    // LCOV_EXCL_LINE
       (void)AUTDLinkSOEMStatusGetMsg(status, const_cast<char*>(msg.c_str()));                                             // LCOV_EXCL_LINE
       (*reinterpret_cast<err_handler_t>(const_cast<void*>(context)))(static_cast<uint16_t>(slave), Status(status, msg));  // LCOV_EXCL_LINE

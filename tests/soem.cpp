@@ -4,8 +4,8 @@
 #include <sstream>
 
 TEST(Link, ThreadPriority) {
-  (void)autd3::link::ThreadPriority::Max;
-  (void)autd3::link::ThreadPriority::Min;
+  (void)autd3::link::ThreadPriority::Max();
+  (void)autd3::link::ThreadPriority::Min();
   (void)autd3::link::ThreadPriority::Crossplarform(0);
   (void)autd3::link::ThreadPriority::Crossplarform(99);
   ASSERT_THROW((void)autd3::link::ThreadPriority::Crossplarform(100), std::invalid_argument);
