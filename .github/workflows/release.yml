@@ -49,7 +49,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           result-encoding: string
           script: |
-            return 'autd3-'+context.payload.ref.replace(/refs\/tags\//, '')+'-${{ matrix.name }}-${{ matrix.arch }}';
+            return 'autd3-link-soem-'+context.payload.ref.replace(/refs\/tags\//, '')+'-${{ matrix.name }}-${{ matrix.arch }}';
       - run: cargo make update-lib
       - run: Compress-Archive -Path LICENSE, lib, include, CMakeLists.txt, README.md, ThirdPartyNotice.txt -DestinationPath assets.zip
         if: ${{ matrix.os == 'windows-latest' }} 
