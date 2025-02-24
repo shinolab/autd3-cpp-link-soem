@@ -26,12 +26,12 @@ class Status {
   static Status Error() { return Status(native_methods::Status::Error, ""); }
   static Status StateChanged() { return Status(native_methods::Status::StateChanged, ""); }
 
-  bool operator==(const Status& that) const { return _inner == that._inner && _msg == that._msg; }
+  bool operator==(const Status &that) const { return _inner == that._inner && _msg == that._msg; }
 
-  friend std::ostream& operator<<(std::ostream& os, const Status& s);
+  friend std::ostream &operator<<(std::ostream &os, const Status &s);
 };
 
-inline std::ostream& operator<<(std::ostream& os, const Status& s) {
+inline std::ostream &operator<<(std::ostream &os, const Status &s) {
   os << s._msg;
   return os;
 }
@@ -43,8 +43,8 @@ class EtherCATAdapter {
  public:
   EtherCATAdapter(std::string desc, std::string name) : _desc(std::move(desc)), _name(std::move(name)) {}
 
-  [[nodiscard]] const std::string& desc() const { return _desc; }
-  [[nodiscard]] const std::string& name() const { return _name; }
+  [[nodiscard]] const std::string &desc() const { return _desc; }
+  [[nodiscard]] const std::string &name() const { return _name; }
 };
 
 struct ThreadPriority {
@@ -100,15 +100,16 @@ struct SOEM final {
   using err_handler_t = void (*)(uint16_t, Status);
 
   explicit SOEM(const err_handler_t err_handler, const SOEMOption option) : err_handler(err_handler), option(option) {
-    _native_err_handler = +[](const void* context, const uint32_t slave, const native_methods::Status status) {           // LCOV_EXCL_LINE
-      const std::string msg(128, ' ');                                                                                    // LCOV_EXCL_LINE
-      (void)AUTDLinkSOEMStatusGetMsg(status, const_cast<char*>(msg.c_str()));                                             // LCOV_EXCL_LINE
-      (*reinterpret_cast<err_handler_t>(const_cast<void*>(context)))(static_cast<uint16_t>(slave), Status(status, msg));  // LCOV_EXCL_LINE
+    _native_err_handler = +[](const void *context, const uint32_t slave,
+                              const native_methods::Status status) {                                                       // LCOV_EXCL_LINE
+      const std::string msg(128, ' ');                                                                                     // LCOV_EXCL_LINE
+      (void)AUTDLinkSOEMStatusGetMsg(status, const_cast<char *>(msg.c_str()));                                             // LCOV_EXCL_LINE
+      (*reinterpret_cast<err_handler_t>(const_cast<void *>(context)))(static_cast<uint16_t>(slave), Status(status, msg));  // LCOV_EXCL_LINE
     };  // LCOV_EXCL_LINE
   }
 
   [[nodiscard]] native_methods::LinkPtr resolve() const {
-    return validate(native_methods::AUTDLinkSOEM(reinterpret_cast<void*>(_native_err_handler), reinterpret_cast<void*>(err_handler), option));
+    return validate(native_methods::AUTDLinkSOEM(reinterpret_cast<void *>(_native_err_handler), reinterpret_cast<void *>(err_handler), option));
   }
 
   err_handler_t err_handler;
@@ -129,7 +130,7 @@ struct SOEM final {
   }
 
  private:
-  using native_err_handler_t = void (*)(const void*, uint32_t, native_methods::Status);
+  using native_err_handler_t = void (*)(const void *, uint32_t, native_methods::Status);
   native_err_handler_t _native_err_handler;
 };
 
