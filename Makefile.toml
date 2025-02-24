@@ -13,7 +13,7 @@ mac_alias = "format-nix"
 [tasks.format-nix]
 script_runner = "@shell"
 script = '''
-clang-format -i ./examples/**.hpp ./examples/**.cpp ./include/**.hpp ./tests/**.hpp ./tests/**.cpp
+clang-format -i ./examples/**.hpp ./examples/**.cpp ./include/**.h ./include/**.hpp ./tests/**.hpp ./tests/**.cpp
 '''
 
 [tasks.format-win]
@@ -21,7 +21,7 @@ script_runner = "pwsh"
 script_extension = "ps1"
 script = '''
 Function Format($root){
-    Get-ChildItem -Path $root -Recurse  -Include *.hpp,*.cpp |
+    Get-ChildItem -Path $root -Recurse  -Include *.h,*.hpp,*.cpp |
         foreach {
             &clang-format -i $_.FullName
         }

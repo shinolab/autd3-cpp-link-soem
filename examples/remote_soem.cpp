@@ -12,7 +12,7 @@ int main() try {
   autd.close();
 
   return 0;
-} catch (std::exception& e) {
+} catch (std::exception &e) {
   print_err(e);
   return -1;
 }

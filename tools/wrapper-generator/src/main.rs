@@ -76,7 +76,7 @@ fn main() -> Result<()> {
         gen_c(
             &crate_path,
             "../../include/autd3_link_soem/native_methods",
-            vec![cbindgen::ItemType::Enums, cbindgen::ItemType::Structs],
+            vec![cbindgen::ItemType::Enums],
         )?;
     }
     for entry in glob(&format!("{}/autd3-capi-link-soem/Cargo.toml", home))? {
