@@ -4,7 +4,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
 endif()
 
-project(autd3_link_soem VERSION 32.1.0)
+project(autd3_link_soem VERSION 32.1.1)
 
 message(STATUS "Build autd3_link_soem: ${PROJECT_VERSION}")
 
@@ -27,17 +27,17 @@ include(FetchContent)
 if(WIN32)
   FetchContent_Declare(
     autd3
-    URL https://github.com/shinolab/autd3-cpp/releases/download/v32.1.0/autd3-v32.1.0-win-x64.zip
+    URL https://github.com/shinolab/autd3-cpp/releases/download/v32.1.1/autd3-v32.1.1-win-x64.zip
   )
 elseif(APPLE)
   FetchContent_Declare(
     autd3
-    URL https://github.com/shinolab/autd3-cpp/releases/download/v32.1.0/autd3-v32.1.0-macos-aarch64.tar.gz
+    URL https://github.com/shinolab/autd3-cpp/releases/download/v32.1.1/autd3-v32.1.1-macos-aarch64.tar.gz
   )
 else()
   FetchContent_Declare(
     autd3
-    URL https://github.com/shinolab/autd3-cpp/releases/download/v32.1.0/autd3-v32.1.0-linux-x64.tar.gz
+    URL https://github.com/shinolab/autd3-cpp/releases/download/v32.1.1/autd3-v32.1.1-linux-x64.tar.gz
   )
 endif()
 FetchContent_MakeAvailable(autd3)
