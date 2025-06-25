@@ -147,10 +147,12 @@ def download_and_extract(url: str, *dest_dirs: str) -> None:
 
 def should_update_lib(version: str) -> bool:
     if platform.system() == "Windows":
-        if not Path("lib/autd3capi_link_soem.lib").is_file():
+        if not Path("bin/autd3capi_link_soem.dll").is_file():
             return True
     elif platform.system() == "Darwin":
-        if not Path("libautd3capi_link_soem.a").is_file():
+        if not Path("bin/libautd3capi_link_soem.dylib").is_file():
+            return True
+    elif not Path("bin/libautd3capi_link_soem.so").is_file():
             return True
 
     version_file = Path("VERSION")
