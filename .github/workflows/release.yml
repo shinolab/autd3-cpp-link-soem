@@ -51,9 +51,9 @@ jobs:
           script: |
             return 'autd3-link-soem-'+context.payload.ref.replace(/refs\/tags\//, '')+'-${{ matrix.name }}-${{ matrix.arch }}';
       - run: cargo make update-lib
-      - run: Compress-Archive -Path LICENSE, lib, include, CMakeLists.txt, README.md, ThirdPartyNotice.txt -DestinationPath assets.zip
+      - run: Compress-Archive -Path LICENSE, lib, bin, include, CMakeLists.txt, README.md, ThirdPartyNotice.txt -DestinationPath assets.zip
         if: ${{ matrix.os == 'windows-latest' }} 
-      - run: tar -zcvf assets.tar.gz lib include CMakeLists.txt LICENSE README.md ThirdPartyNotice.txt
+      - run: tar -zcvf assets.tar.gz bin include CMakeLists.txt LICENSE README.md ThirdPartyNotice.txt
         shell: bash
         if: ${{ matrix.os != 'windows-latest' }}
       - uses: actions/download-artifact@v4

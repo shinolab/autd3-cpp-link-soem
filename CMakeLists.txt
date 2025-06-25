@@ -4,7 +4,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there. You may need to remove CMakeCache.txt. ")
 endif()
 
-project(autd3_link_soem VERSION 33.0.0)
+project(autd3_link_soem VERSION 34.0.0)
 
 message(STATUS "Build autd3_link_soem: ${PROJECT_VERSION}")
 
@@ -15,9 +15,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 option(USE_SYSTEM_EIGEN "Use system installed eigen3" OFF)
-option(USE_SYSTEM_LIBCORO "Use system installed libcoro" OFF)
-option(AUTD3_ASYNC_API "Use async APIs" OFF)
-option(AUTD3_USE_PCH "Use precompiled headers" OFF)
 
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.24.0") 
   cmake_policy(SET CMP0135 NEW)
@@ -27,41 +24,53 @@ include(FetchContent)
 if(WIN32)
   FetchContent_Declare(
     autd3
-    URL https://github.com/shinolab/autd3-cpp/releases/download/v33.0.0/autd3-v33.0.0-win-x64.zip
+    URL https://github.com/shinolab/autd3-cpp/releases/download/v34.0.0/autd3-v34.0.0-win-x64.zip
   )
 elseif(APPLE)
   FetchContent_Declare(
     autd3
-    URL https://github.com/shinolab/autd3-cpp/releases/download/v33.0.0/autd3-v33.0.0-macos-aarch64.tar.gz
+    URL https://github.com/shinolab/autd3-cpp/releases/download/v34.0.0/autd3-v34.0.0-macos-aarch64.tar.gz
   )
 else()
   FetchContent_Declare(
     autd3
-    URL https://github.com/shinolab/autd3-cpp/releases/download/v33.0.0/autd3-v33.0.0-linux-x64.tar.gz
+    URL https://github.com/shinolab/autd3-cpp/releases/download/v34.0.0/autd3-v34.0.0-linux-x64.tar.gz
   )
 endif()
 FetchContent_MakeAvailable(autd3)
 
-if(WIN32)
-  if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64|IA64")
-    set(WPCAP_LIB_DIR ${PROJECT_SOURCE_DIR}/lib/wpcap/x64)
-  elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ARM64")
-    set(WPCAP_LIB_DIR ${PROJECT_SOURCE_DIR}/lib/wpcap/ARM64)
+macro(autd_target_link_libraries target lib)
+  if(WIN32)
+    target_link_libraries(${target} INTERFACE "${lib}.dll.lib")
+  elseif(APPLE)
+    target_link_libraries(${target} INTERFACE ${lib})
+  else()
+    target_link_libraries(${target} INTERFACE ${lib})
   endif()
-endif()
+endmacro()
 
 add_library(autd3_link_soem INTERFACE)
 target_include_directories(autd3_link_soem INTERFACE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(autd3_link_soem INTERFACE autd3::common autd3capi_link_soem)
-target_link_directories(autd3_link_soem INTERFACE ${PROJECT_SOURCE_DIR}/lib)
-target_compile_definitions(autd3_link_soem INTERFACE AUTD3_EXT_TRACING)
-if(AUTD3_USE_PCH)
-  target_precompile_headers(autd3_link_soem REUSE_FROM autd3::common)
+target_link_libraries(autd3_link_soem INTERFACE autd3::common)
+autd_target_link_libraries(autd3_link_soem autd3capi_link_soem)
+if(WIN32)
+  target_link_directories(autd3_link_soem INTERFACE ${PROJECT_SOURCE_DIR}/lib)
+else()
+  target_link_directories(autd3_link_soem INTERFACE ${PROJECT_SOURCE_DIR}/bin)
 endif()
 if(WIN32)
   target_link_libraries(autd3_link_soem INTERFACE Ws2_32.lib Winmm.lib)
-  target_link_directories(autd3_link_soem INTERFACE ${WPCAP_LIB_DIR})
+  target_link_directories(autd3_link_soem INTERFACE ${PROJECT_SOURCE_DIR}/lib/wpcap/x64)
   target_link_libraries(autd3_link_soem INTERFACE wpcap.lib)
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+  add_custom_target(autd3capi_link_soem)
+  add_custom_command(TARGET autd3capi_link_soem POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/$<CONFIG>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_SOURCE_DIR}/bin/autd3capi_link_soem.dll" ${CMAKE_BINARY_DIR}/$<CONFIG>
+    VERBATIM
+  )
+  set_property(TARGET autd3capi_link_soem PROPERTY FOLDER "autd3capi") 
+  add_dependencies(autd3_link_soem autd3capi_link_soem)
 elseif(APPLE)
   target_link_libraries(autd3_link_soem INTERFACE pcap)
 endif()

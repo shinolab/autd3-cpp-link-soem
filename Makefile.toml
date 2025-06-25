@@ -175,19 +175,19 @@ base_url = f"https://github.com/shinolab/autd3-capi-link-soem/releases/download/
 
 if platform.system() == "Windows":
     download_and_extract(
-        f"{base_url}/autd3-link-soem-v{version}-win-x64-static.zip",
+        f"{base_url}/autd3-link-soem-v{version}-win-x64.zip",
         "src/native/windows/x64",
         "tests",
     )
 elif platform.system() == "Darwin":
     download_and_extract(
-        f"{base_url}/autd3-link-soem-v{version}-macos-aarch64-static.tar.gz",
+        f"{base_url}/autd3-link-soem-v{version}-macos-aarch64.tar.gz",
         "src/native/osx/aarch64",
         "tests",
     )
 else:
     download_and_extract(
-        f"{base_url}/autd3-link-soem-v{version}-linux-x64-static.tar.gz",
+        f"{base_url}/autd3-link-soem-v{version}-linux-x64.tar.gz",
         "src/native/linux/x64",
         "tests",
     )
