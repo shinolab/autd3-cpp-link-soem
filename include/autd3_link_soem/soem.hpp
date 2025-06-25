@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "autd3/controller/sleeper.hpp"
