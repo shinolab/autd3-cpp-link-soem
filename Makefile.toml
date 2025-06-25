@@ -147,10 +147,12 @@ def download_and_extract(url: str, *dest_dirs: str) -> None:
 
 def should_update_lib(version: str) -> bool:
     if platform.system() == "Windows":
-        if not Path("lib/autd3capi_link_soem.lib").is_file():
+        if not Path("bin/autd3capi_link_soem.dll").is_file():
             return True
     elif platform.system() == "Darwin":
-        if not Path("libautd3capi_link_soem.a").is_file():
+        if not Path("bin/libautd3capi_link_soem.dylib").is_file():
+            return True
+    elif not Path("bin/libautd3capi_link_soem.so").is_file():
             return True
 
     version_file = Path("VERSION")
@@ -175,19 +177,19 @@ base_url = f"https://github.com/shinolab/autd3-capi-link-soem/releases/download/
 
 if platform.system() == "Windows":
     download_and_extract(
-        f"{base_url}/autd3-link-soem-v{version}-win-x64-static.zip",
+        f"{base_url}/autd3-link-soem-v{version}-win-x64.zip",
         "src/native/windows/x64",
         "tests",
     )
 elif platform.system() == "Darwin":
     download_and_extract(
-        f"{base_url}/autd3-link-soem-v{version}-macos-aarch64-static.tar.gz",
+        f"{base_url}/autd3-link-soem-v{version}-macos-aarch64.tar.gz",
         "src/native/osx/aarch64",
         "tests",
     )
 else:
     download_and_extract(
-        f"{base_url}/autd3-link-soem-v{version}-linux-x64-static.tar.gz",
+        f"{base_url}/autd3-link-soem-v{version}-linux-x64.tar.gz",
         "src/native/linux/x64",
         "tests",
     )

@@ -38,6 +38,12 @@ TEST(Link, SOEM) {
   (void)link;
 }
 
+TEST(Link, SOEMWithSleeper) {
+  auto link =
+      autd3::link::SOEM::with_sleeper([](const uint16_t, const autd3::link::Status) {}, autd3::link::SOEMOption{}, autd3::controller::StdSleeper{});
+  (void)link;
+}
+
 TEST(Link, RemoteSOEM) {
   auto link = autd3::link::RemoteSOEM("127.0.0.1:8080");
   (void)link;

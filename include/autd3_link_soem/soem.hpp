@@ -4,14 +4,13 @@
 #include <string>
 #include <vector>
 
+#include "autd3/controller/sleeper.hpp"
 #include "autd3/native_methods/utils.hpp"
 #include "autd3_link_soem/native_methods.hpp"
 
 namespace autd3::link {
 
 using native_methods::ProcessPriority;
-using native_methods::SyncMode;
-using native_methods::TimerStrategy;
 
 class Status {
   native_methods::Status _inner;
@@ -70,8 +69,6 @@ concept soem_err_handler_f = requires(F f, const uint16_t slave, const Status st
 
 struct SOEMOption {
   size_t buf_size = 32;
-  TimerStrategy timer_strategy = TimerStrategy::SpinSleep;
-  SyncMode sync_mode = SyncMode::DC;
   std::string ifname = "";
   std::chrono::nanoseconds state_check_interval = std::chrono::milliseconds(100);
   std::chrono::nanoseconds sync0_cycle = std::chrono::milliseconds(1);
@@ -86,11 +83,9 @@ struct SOEMOption {
                                       .buf_size = static_cast<uint32_t>(buf_size),
                                       .send_cycle = native_methods::to_duration(send_cycle),
                                       .sync0_cycle = native_methods::to_duration(sync0_cycle),
-                                      .sync_mode = SyncMode::DC,
                                       .process_priority = process_priority,
                                       .thread_priority = thread_priority,
                                       .state_check_interval = native_methods::to_duration(state_check_interval),
-                                      .timer_strategy = timer_strategy,
                                       .sync_tolerance = native_methods::to_duration(sync_tolerance),
                                       .sync_timeout = native_methods::to_duration(sync_timeout)};
   }
@@ -99,7 +94,8 @@ struct SOEMOption {
 struct SOEM final {
   using err_handler_t = void (*)(uint16_t, Status);
 
-  explicit SOEM(const err_handler_t err_handler, const SOEMOption option) : err_handler(err_handler), option(option) {
+  explicit SOEM(const err_handler_t err_handler, const SOEMOption option)
+      : err_handler(err_handler), option(option), sleeper(controller::SpinSleeper{}) {
     _native_err_handler = +[](const void *context, const uint32_t slave, const native_methods::Status status) {            // LCOV_EXCL_LINE
       const std::string msg(128, ' ');                                                                                     // LCOV_EXCL_LINE
       (void)AUTDLinkSOEMStatusGetMsg(status, const_cast<char *>(msg.c_str()));                                             // LCOV_EXCL_LINE
@@ -107,12 +103,21 @@ struct SOEM final {
     };  // LCOV_EXCL_LINE
   }
 
+  static SOEM with_sleeper(const err_handler_t err_handler, const SOEMOption option,
+                           std::variant<controller::SpinSleeper, controller::StdSleeper, controller::SpinWaitSleeper> sleeper) {
+    SOEM link(err_handler, option);
+    link.sleeper = std::move(sleeper);
+    return link;
+  }
+
   [[nodiscard]] native_methods::LinkPtr resolve() const {
-    return validate(native_methods::AUTDLinkSOEM(reinterpret_cast<void *>(_native_err_handler), reinterpret_cast<void *>(err_handler), option));
+    return validate(native_methods::AUTDLinkSOEM(reinterpret_cast<void *>(_native_err_handler), reinterpret_cast<void *>(err_handler), option,
+                                                 std::visit([](const auto &s) { return native_methods::SleeperWrap(s); }, sleeper)));
   }
 
   err_handler_t err_handler;
   SOEMOption option;
+  std::variant<controller::SpinSleeper, controller::StdSleeper, controller::SpinWaitSleeper> sleeper;
 
   [[nodiscard]] static std::vector<EtherCATAdapter> enumerate_adapters() {
     const auto handle = native_methods::AUTDAdapterPointer();

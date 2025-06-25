@@ -19,11 +19,9 @@ struct SOEMOption {
   uint32_t buf_size;
   Duration send_cycle;
   Duration sync0_cycle;
-  SyncMode sync_mode;
   ProcessPriority process_priority;
   ThreadPriorityPtr thread_priority;
   Duration state_check_interval;
-  TimerStrategy timer_strategy;
   Duration sync_tolerance;
   Duration sync_timeout;
 };
@@ -43,7 +41,7 @@ void AUTDLinkSOEMTracingInit();
 ResultStatus AUTDLinkSOEMTracingInitWithFile(const char *path);
 
 [[nodiscard]]
-ResultLink AUTDLinkSOEM(const void *err_handler, const void *err_context, SOEMOption option);
+ResultLink AUTDLinkSOEM(const void *err_handler, const void *err_context, SOEMOption option, SleeperWrap sleeper);
 
 [[nodiscard]] bool AUTDLinkSOEMIsDefault(SOEMOption option);
 

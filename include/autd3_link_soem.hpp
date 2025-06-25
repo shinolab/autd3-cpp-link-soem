@@ -5,12 +5,9 @@
 namespace autd3 {
 
 namespace link::soem {
-static inline std::string version = "33.0.0";
+static inline std::string version = "34.0.0";
 }
 
-inline void tracing_init() {
-  native_methods::AUTDTracingInit();
-  native_methods::AUTDLinkSOEMTracingInit();
-}
+inline void tracing_init() { native_methods::AUTDLinkSOEMTracingInit(); }
 
 }  // namespace autd3

@@ -28,27 +28,4 @@ enum class Status : uint8_t {
   StateChanged = 2,
 };
 
-/// Synchronization mode.
-///
-/// See [Synchronization modes of an EtherCAT
-/// slave](https://infosys.beckhoff.com/english.php?content=../content/1033/ethercatsystem/2469118347.html&id=) for more information.
-enum class SyncMode : uint8_t {
-  /// DC
-  DC = 0,
-  /// FreeRun
-  FreeRun = 1,
-};
-
-/// The timer strategy.
-enum class TimerStrategy : uint8_t {
-  /// Using [`spin_sleep`] crate.
-  ///
-  /// [`spin_sleep`]: https://docs.rs/spin_sleep
-  SpinSleep = 0,
-  /// Using [`std::thread::sleep`] function.
-  StdSleep = 1,
-  /// Using spin loop, or busy-wait loop.
-  SpinWait = 2,
-};
-
 }  // namespace autd3::native_methods
