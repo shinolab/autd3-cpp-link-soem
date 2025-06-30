@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
@@ -63,13 +64,17 @@ struct ThreadPriority {
   native_methods::ThreadPriorityPtr _ptr;
 };
 
+struct CoreId {
+  uint32_t id;
+};
+
 template <class F>
 concept soem_err_handler_f = requires(F f, const uint16_t slave, const Status status) {
   { f(slave, status) } -> std::same_as<void>;
 };
 
 struct SOEMOption {
-  size_t buf_size = 32;
+  size_t buf_size = 16;
   std::string ifname = "";
   std::chrono::nanoseconds state_check_interval = std::chrono::milliseconds(100);
   std::chrono::nanoseconds sync0_cycle = std::chrono::milliseconds(1);
@@ -78,6 +83,7 @@ struct SOEMOption {
   ProcessPriority process_priority = ProcessPriority::High;
   std::chrono::nanoseconds sync_tolerance = std::chrono::microseconds(1);
   std::chrono::nanoseconds sync_timeout = std::chrono::seconds(10);
+  std::optional<CoreId> affinity = std::nullopt;
 
   operator native_methods::SOEMOption() const {
     return native_methods::SOEMOption{.ifname = ifname.c_str(),
@@ -88,7 +94,8 @@ struct SOEMOption {
                                       .thread_priority = thread_priority,
                                       .state_check_interval = native_methods::to_duration(state_check_interval),
                                       .sync_tolerance = native_methods::to_duration(sync_tolerance),
-                                      .sync_timeout = native_methods::to_duration(sync_timeout)};
+                                      .sync_timeout = native_methods::to_duration(sync_timeout),
+                                      .affinity = affinity.has_value() ? static_cast<int32_t>(affinity->id) : -1};
   }
 };
 
