@@ -24,6 +24,7 @@ struct SOEMOption {
   Duration state_check_interval;
   Duration sync_tolerance;
   Duration sync_timeout;
+  int32_t affinity;
 };
 
 extern "C" {
